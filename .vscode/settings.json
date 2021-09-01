@@ -1,4 +1,6 @@
 {
   "solidity.compileUsingRemoteVersion": "v0.6.6+commit.6c089d02",
-  "solidity.enableLocalNodeCompiler": false
+  "solidity.enableLocalNodeCompiler": false,
+  "python.formatting.provider": "black",
+  "editor.formatOnSave": true
 }
