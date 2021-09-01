@@ -1,10 +1,20 @@
-from typing import Collection
 from brownie import AdvancedCollectible, network
 from metadata import sample_metadata
 from scripts.helpful_scripts import get_breed
+from dotenv import load_dotenv
 from pathlib import Path
 import os
 import requests
+import json
+
+load_dotenv()
+
+breed_to_image_uri = {
+    "PUG": "https://ipfs.io/ipfs/QmSsYRx3LpDAb1GZQm7zZ1AuHZjfbPkD6J7s9r41xu1mf8?filename=pug.png",
+    "SHIBA_INU": "https://ipfs.io/ipfs/QmYx6GsYAKnNzZ9A6NvEKV9nf1VaDzJrqDR23Y8YSkebLU?filename=shiba-inu.png",
+    "ST_BERNARD": "https://ipfs.io/ipfs/QmUPjADFGEKmfohdTaNcWhp7VGk26h5jXDA7v3VtTnTLcW?filename=st-bernard.png",
+}
+
 
 def main():
     print('Working on ' + network.show_active())
@@ -32,6 +42,12 @@ def write_metadata(number_of_tokens, nft_contract):
             if os.getenv('UPLOAD_IPFS') == 'true':
                 image_path = './img/{}.png'.format(breed.lower().replace('_', '-'))
                 image_to_upload = upload_to_ipfs(image_path)
+            image_to_upload = breed_to_image_uri[breed] if not image_to_upload else image_to_upload
+            collectible_metadata['image'] = image_to_upload
+            with open(metadata_file_name, 'w') as file:
+                json.dump(collectible_metadata, file)
+            if os.getenv('UPLOAD_IPFS') == 'true':
+                upload_to_ipfs(metadata_file_name)
 
 # curl -X POST -F file=@img/pug.png http://localhost:5001/api/v0/add
 
